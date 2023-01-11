@@ -26,12 +26,18 @@ export default class MyPlugin extends Plugin {
 			name: 'Add Ref',
 			editorCallback:   (editor: Editor, view: MarkdownView) => {
 				const content = parse2Dom(editor.getValue());
-				const citation: any = content.getElementsByTagName("citation")
-				console.log(citation)
+				const citations:any = Array.from(content.getElementsByTagName("citation"))
+				console.log(citations)
 				var ref = ""
-				for(var i=0;i<citation.length;i++){
-					ref += "["+(i+1)+"] "+ citation[i].attributes.author.value + " (" + citation[i].attributes.year.value + ")" + citation[i].attributes.title.value + "\n"
-				}
+				const references = new Set()
+				citations.forEach((citation:any, i:any) => {
+					const reference = `${citation.attributes.author.value} ${citation.attributes.year.value} ${citation.attributes.title.value}`
+					if(!references.has(reference)){
+						references.add(reference)
+						ref += `[${i+1}] ${citation.attributes.author.value} (${citation.attributes.year.value}) ${citation.attributes.title.value}\n\n`
+					}
+				});
+				console.log(ref)
 				editor.replaceSelection(ref);
 			}
 		});
