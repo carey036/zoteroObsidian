@@ -16,6 +16,7 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		// mine
+
 		function parse2Dom(str:string){
 			var div = document.createElement("div");
 			div.innerHTML = str;
@@ -27,14 +28,14 @@ export default class MyPlugin extends Plugin {
 			editorCallback:   (editor: Editor, view: MarkdownView) => {
 				const content = parse2Dom(editor.getValue());
 				const citations:any = Array.from(content.getElementsByTagName("citation"))
-				console.log(citations)
+				const citationString = require("citationString.js")
 				var ref = ""
 				const references = new Set()
 				citations.forEach((citation:any, i:any) => {
-					const reference = `${citation.attributes.author.value} ${citation.attributes.year.value} ${citation.attributes.title.value}`
+					const reference = citationString(citation.attributes.citekey.value)
 					if(!references.has(reference)){
 						references.add(reference)
-						ref += `[${i+1}] ${citation.attributes.author.value} (${citation.attributes.year.value}) ${citation.attributes.title.value}\n\n`
+						ref += `[${i+1}] ${citationString(citation.attributes.citekey.value)}\n\n`
 					}
 				});
 				console.log(ref)
